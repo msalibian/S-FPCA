@@ -1,4 +1,4 @@
-# S-FPCA
+# S-estimators for Functional Principal Components Analysis
 
 This repository contains `R` code to
 compute S-estimators for Functional Principal Components Analysis as proposed in 
