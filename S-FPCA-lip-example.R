@@ -32,17 +32,17 @@ matplot(x=te, y=lippo, ylab='', xlab='Time', type='l', col='gray', lty=1, lwd=2)
 # functions to prepare a spline basis in (0, 0.69) (instead of (0,1))
 devolver.base069.sieves <- function(mesh,k)
 {    
-    aa <- generar.mesh.splines(k)
-    knots<-(aa+1)*0.69/2
-    base.estim.disc <- cSplineDes(mesh,knots)
-	return(base.estim.disc)
+  aa <- generar.mesh.splines(k)
+  knots<-(aa+1)*0.69/2
+  base.estim.disc <- cSplineDes(mesh,knots)
+  return(base.estim.disc)
 }
 
 devolver.base069.sieves.ortonormal <- function(mesh,k)
 {
-    base.estim.disc <-devolver.base069.sieves(mesh,k)
-   base.ortonorm.disc<-qr.Q(qr(base.estim.disc))
-    return(base.ortonorm.disc)
+  base.estim.disc <-devolver.base069.sieves(mesh,k)
+  base.ortonorm.disc<-qr.Q(qr(base.estim.disc))
+  return(base.ortonorm.disc)
 }
 
 # prepare the spline basis (with 20 functions)
@@ -66,7 +66,7 @@ q <- 5
 Ncand <- 1000 # 1000
 
 y.sfpca <- sfpca(x=y, mu=mui, q=q, Ncand=Ncand, seed=123, init.it=50, max.it=500, 
-tol=1e-10, trace=TRUE, tuning.rho=3, bb = 0.2426) 
+                 tol=1e-10, trace=TRUE, tuning.rho=3, bb = 0.2426) 
 
 
 mu.hat <- as.vector( base.estim.Bspline %*% y.sfpca$mu )
