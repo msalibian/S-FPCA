@@ -14,19 +14,23 @@ The following script illustrates this method when applied to the well-known lip 
 source('S-FPCA-functions.R')
 ```
 
+Read and display the data: the x-axis is time, the y-axis is the lip vertical position:
+
 ``` r
 # read data
 lippo <- read.table('lip-data.txt')
 norm <- function(a) sqrt(sum(a^2))
-
-# prepare data
 x <- t(lippo)
 te <- seq(0,0.69,length=501)
-
 # plot data
 matplot(x=te, y=lippo, ylab='', xlab='Time', type='l', col='gray', lty=1, lwd=2)
+```
 
+![](README_files/figure-markdown_github/readdata-1.png)
 
+We need the following functions to represent the data on a spline basis:
+
+``` r
 # functions to prepare a spline basis in (0, 0.69) (instead of (0,1))
 devolver.base069.sieves <- function(mesh,k)
 {    
@@ -42,20 +46,24 @@ devolver.base069.sieves.ortonormal <- function(mesh,k)
   base.ortonorm.disc<-qr.Q(qr(base.estim.disc))
   return(base.ortonorm.disc)
 }
+```
 
+We now compute the coefficients of each observation on a spline basis of size 20:
+
+``` r
 # prepare the spline basis (with 20 functions)
 mesh <- te
 n <- nrow(x)
 dimension.Bspline <- 20 
-
 aa <- generar.mesh.splines(dimension.Bspline )
 knots <- (aa+1)*0.69/2
 base1 <- devolver.base069.sieves(mesh, dimension.Bspline)
 base.estim.Bspline <- devolver.base069.sieves.ortonormal(mesh, dimension.Bspline)
-
 # find the representation of the data on this basis
 y <- x %*% base.estim.Bspline
+```
 
+``` r
 # initial "mean" function (L1-estimate)
 mui <- l1median(X=y,trace=-1) # pcaPP::
 # dimension of the "best" subspace to be estimated 

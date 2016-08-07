@@ -28,19 +28,21 @@ the script `S-FPCA-mortality-example.R`, the data is in `FRA_Death_rates_1x2.txt
 source('S-FPCA-functions.R')
 ```
 
-```R
+Read and display the data: the x-axis is time, 
+the y-axis is the lip vertical position:
+```{r readdata}
 # read data
 lippo <- read.table('lip-data.txt')
 norm <- function(a) sqrt(sum(a^2))
-
-# prepare data
 x <- t(lippo)
 te <- seq(0,0.69,length=501)
-
 # plot data
 matplot(x=te, y=lippo, ylab='', xlab='Time', type='l', col='gray', lty=1, lwd=2)
+```
 
-
+We need the following functions to represent the data on 
+a spline basis:
+```{r splinefns}
 # functions to prepare a spline basis in (0, 0.69) (instead of (0,1))
 devolver.base069.sieves <- function(mesh,k)
 {    
@@ -56,31 +58,38 @@ devolver.base069.sieves.ortonormal <- function(mesh,k)
   base.ortonorm.disc<-qr.Q(qr(base.estim.disc))
   return(base.ortonorm.disc)
 }
-
+```
+We now compute the coefficients of each observation
+on a spline basis of size 20:
+```{r splines}
 # prepare the spline basis (with 20 functions)
 mesh <- te
 n <- nrow(x)
 dimension.Bspline <- 20 
-
 aa <- generar.mesh.splines(dimension.Bspline )
 knots <- (aa+1)*0.69/2
 base1 <- devolver.base069.sieves(mesh, dimension.Bspline)
 base.estim.Bspline <- devolver.base069.sieves.ortonormal(mesh, dimension.Bspline)
-
 # find the representation of the data on this basis
 y <- x %*% base.estim.Bspline
-
-# initial "mean" function (L1-estimate)
+```
+We compute an *initial* central function using an L1 estimate: 
+```{r initialcentre}
+# initial "central" function (L1-estimate)
 mui <- l1median(X=y,trace=-1) # pcaPP::
+```
+We now compute the best 5-dimensional
+approximation, using an S-estimator 
+```{r mainblock, cache=TRUE}
 # dimension of the "best" subspace to be estimated 
 q <- 5
 # number of random starts for the iterative algorithm
 Ncand <- 1000 # 1000
-
 y.sfpca <- sfpca(x=y, mu=mui, q=q, Ncand=Ncand, seed=123, init.it=50, max.it=500, 
                  tol=1e-10, trace=TRUE, tuning.rho=3, bb = 0.2426) 
+```
 
-
+```R
 mu.hat <- as.vector( base.estim.Bspline %*% y.sfpca$mu )
 x.hat.ls <- base.estim.Bspline %*% t( y.sfpca$x.ls ) 
 
