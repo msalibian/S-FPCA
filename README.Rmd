@@ -1,20 +1,34 @@
-S-estimators for Functional PCA
-================
-Matias Salibian
-2016-08-07
+---
+title: "S-estimators for Functional PCA"
+author: "Matias Salibian"
+date: "`r format(Sys.Date())`"
+output: github_document
+---
 
-S-estimators for FPCA
----------------------
 
-This repository contains `R` code to compute S-estimators for Functional Principal Components Analysis as proposed in [Boente and Salibian (2015)](http://dx.doi.org/10.1080/01621459.2014.946991).
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-The following script illustrates this method when applied to the well-known lip movement data. Click [here](http://www.stats.ox.ac.uk/~silverma/fdacasebook/lipemg.html) for more information on these data. Another illustrative example (mortality data example) is in the script `S-FPCA-mortality-example.R`, the data is in `FRA_Death_rates_1x2.txt`
+## S-estimators for FPCA
 
-``` r
+This repository contains `R` code to
+compute S-estimators for Functional Principal Components Analysis as proposed in 
+[Boente and Salibian (2015)](http://dx.doi.org/10.1080/01621459.2014.946991). 
+
+
+The following script illustrates this method when applied to the
+well-known lip movement data. 
+Click [here](http://www.stats.ox.ac.uk/~silverma/fdacasebook/lipemg.html) 
+for more information on these data.
+Another illustrative example (mortality data example) is in
+the script `S-FPCA-mortality-example.R`, the data is in `FRA_Death_rates_1x2.txt`
+
+```{r preliminary, message=FALSE, warning=FALSE}
 source('S-FPCA-functions.R')
 ```
 
-``` r
+```R
 # read data
 lippo <- read.table('lip-data.txt')
 norm <- function(a) sqrt(sum(a^2))
@@ -96,3 +110,9 @@ ous <- (1:n)[re.s > .65]
 matplot(x=te, y=t(x), lty=1, type='l', col='gray', xlab='Time', ylab='', lwd=2)
 for(i in ous) lines(x=te, y=x[i,], lwd=4, col='gray30')
 ```
+
+
+
+
+
+
