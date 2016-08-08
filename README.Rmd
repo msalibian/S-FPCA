@@ -81,7 +81,7 @@ mui <- l1median(X=y,trace=-1) # pcaPP::
 We now compute the best 5-dimensional
 approximation using an S-estimator. This step may take 
 several minutes to complete. 
-```{r mainblock, cache=TRUE}
+```{r mainblock, cache=TRUE, warning=FALSE, message=FALSE}
 # dimension of the "best" subspace to be estimated 
 q <- 5
 # number of random starts for the iterative algorithm
