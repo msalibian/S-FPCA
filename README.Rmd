@@ -91,7 +91,7 @@ y.sfpca <- sfpca(x=y, mu=mui, q=q, Ncand=Ncand, seed=123, init.it=50, max.it=500
 ```
 Having computed the approximation on the 20-dimensional space of
 spline coefficients, we now map the approximations back to the
-original space, and plot them:
+original space, and plot the corresponding central curve:
 ```{r mapback}
 mu.hat <- as.vector( base.estim.Bspline %*% y.sfpca$mu )
 x.hat.ls <- base.estim.Bspline %*% t( y.sfpca$x.ls ) 
@@ -104,7 +104,10 @@ matplot(x=te, y=x.hat.rulo.s, lty=1, type='l', col='gray', lwd=2, xlab='Time', y
 lines(mu.hat ~ te, lwd=4, col='black')
 ```
 
-```R
+To identify potential outliers, we show the 
+squared residuals between the observed curves and their 
+predictions (robust (in gray) and classical (in black)):
+```{r residuals}
 # S- and LS-prediction residuals
 re.s <- colMeans((t(x)-x.hat.rulo.s)^2)
 re.ls <- colMeans((t(x)-x.hat.ls)^2)
@@ -115,7 +118,12 @@ re.ls <- re.ls * 1e6
 plot(re.s, type='b', pch=19, lwd=3, cex=2.5, col='gray70',ylab="Residual squared norm")
 lines(re.ls, type='b', pch=19, lwd=3, cex=2.5, col='black')
 abline(h=0.65, lwd=4, lty=2, col='gray30')
+```
 
+The following plot shows these potentially outlying curves,
+which seem to have their second peak either too late, or 
+too early:
+```{r outliers}
 ous <- (1:n)[re.s > .65]
 
 matplot(x=te, y=t(x), lty=1, type='l', col='gray', xlab='Time', ylab='', lwd=2)

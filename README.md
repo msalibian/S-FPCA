@@ -63,31 +63,43 @@ base.estim.Bspline <- devolver.base069.sieves.ortonormal(mesh, dimension.Bspline
 y <- x %*% base.estim.Bspline
 ```
 
+We compute an *initial* central function using an L1 estimate:
+
 ``` r
-# initial "mean" function (L1-estimate)
+# initial "central" function (L1-estimate)
 mui <- l1median(X=y,trace=-1) # pcaPP::
+```
+
+We now compute the best 5-dimensional approximation using an S-estimator. This step may take several minutes to complete.
+
+``` r
 # dimension of the "best" subspace to be estimated 
 q <- 5
 # number of random starts for the iterative algorithm
 Ncand <- 1000 # 1000
-
 y.sfpca <- sfpca(x=y, mu=mui, q=q, Ncand=Ncand, seed=123, init.it=50, max.it=500, 
-                 tol=1e-10, trace=TRUE, tuning.rho=3, bb = 0.2426) 
+                 tol=1e-10, trace=FALSE, tuning.rho=3, bb = 0.2426) 
+```
 
+Having computed the approximation on the 20-dimensional space of spline coefficients, we now map the approximations back to the original space, and plot the corresponding central curve:
 
+``` r
 mu.hat <- as.vector( base.estim.Bspline %*% y.sfpca$mu )
 x.hat.ls <- base.estim.Bspline %*% t( y.sfpca$x.ls ) 
-
 yc <- scale(y, center=y.sfpca$mu, scale=FALSE)
 bon <- qr.Q(qr(y.sfpca$b))
 y.rulo.s <- scale( (yc %*% bon) %*% t( bon ), center=-y.sfpca$mu, scale=FALSE)
 x.hat.rulo.s <- base.estim.Bspline %*% t( y.rulo.s ) 
-
 # robust predictions
 matplot(x=te, y=x.hat.rulo.s, lty=1, type='l', col='gray', lwd=2, xlab='Time', ylab='')
 lines(mu.hat ~ te, lwd=4, col='black')
+```
 
+![](README_files/figure-markdown_github/mapback-1.png)
 
+To identify potential outliers, we show the squared residuals between the observed curves and their predictions (robust (in gray) and classical (in black)):
+
+``` r
 # S- and LS-prediction residuals
 re.s <- colMeans((t(x)-x.hat.rulo.s)^2)
 re.ls <- colMeans((t(x)-x.hat.ls)^2)
@@ -98,9 +110,17 @@ re.ls <- re.ls * 1e6
 plot(re.s, type='b', pch=19, lwd=3, cex=2.5, col='gray70',ylab="Residual squared norm")
 lines(re.ls, type='b', pch=19, lwd=3, cex=2.5, col='black')
 abline(h=0.65, lwd=4, lty=2, col='gray30')
+```
 
+![](README_files/figure-markdown_github/residuals-1.png)
+
+The following plot shows these potentially outlying curves, which seem to have their second peak either too late, or too early:
+
+``` r
 ous <- (1:n)[re.s > .65]
 
 matplot(x=te, y=t(x), lty=1, type='l', col='gray', xlab='Time', ylab='', lwd=2)
 for(i in ous) lines(x=te, y=x[i,], lwd=4, col='gray30')
 ```
+
+![](README_files/figure-markdown_github/outliers-1.png)
