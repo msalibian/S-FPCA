@@ -79,30 +79,32 @@ We compute an *initial* central function using an L1 estimate:
 mui <- l1median(X=y,trace=-1) # pcaPP::
 ```
 We now compute the best 5-dimensional
-approximation, using an S-estimator 
+approximation using an S-estimator. This step may take 
+several minutes to complete. 
 ```{r mainblock, cache=TRUE}
 # dimension of the "best" subspace to be estimated 
 q <- 5
 # number of random starts for the iterative algorithm
 Ncand <- 1000 # 1000
 y.sfpca <- sfpca(x=y, mu=mui, q=q, Ncand=Ncand, seed=123, init.it=50, max.it=500, 
-                 tol=1e-10, trace=TRUE, tuning.rho=3, bb = 0.2426) 
+                 tol=1e-10, trace=FALSE, tuning.rho=3, bb = 0.2426) 
 ```
-
-```R
+Having computed the approximation on the 20-dimensional space of
+spline coefficients, we now map the approximations back to the
+original space, and plot them:
+```{r mapback}
 mu.hat <- as.vector( base.estim.Bspline %*% y.sfpca$mu )
 x.hat.ls <- base.estim.Bspline %*% t( y.sfpca$x.ls ) 
-
 yc <- scale(y, center=y.sfpca$mu, scale=FALSE)
 bon <- qr.Q(qr(y.sfpca$b))
 y.rulo.s <- scale( (yc %*% bon) %*% t( bon ), center=-y.sfpca$mu, scale=FALSE)
 x.hat.rulo.s <- base.estim.Bspline %*% t( y.rulo.s ) 
-
 # robust predictions
 matplot(x=te, y=x.hat.rulo.s, lty=1, type='l', col='gray', lwd=2, xlab='Time', ylab='')
 lines(mu.hat ~ te, lwd=4, col='black')
+```
 
-
+```R
 # S- and LS-prediction residuals
 re.s <- colMeans((t(x)-x.hat.rulo.s)^2)
 re.ls <- colMeans((t(x)-x.hat.ls)^2)
