@@ -95,6 +95,41 @@ sfpca <- function(x, mu, q, Ncand=50, seed=191, init.it=20, max.it=500, tol=1e-6
 }
 
 
+sfpca.par <- function(x, mu, q, Ncand=50, seed=191, init.it=20, max.it=500, tol=1e-6, 
+                      trace=TRUE, tuning.rho=3, bb=0.24) {
+  # doParallel version of sfpca()
+  this.call <- match.call()
+  # LS solution
+  sih <- var(x)
+  b.ls <- svd(sih)$u[,1:q]
+  mu.ls <- colMeans(x)
+  a.ls <- scale(x, center=mu.ls, scale=FALSE) %*% b.ls
+  x.ls <- a.ls %*% t(b.ls)
+  x.ls <- scale(x.ls, center=-mu.ls, scale=FALSE)
+  best.obj <- +Inf
+  #mu.med <- apply(x, 2, median)
+  #ache <- 0.1
+  #mu<- ksmooth(te, mu.med, kernel = "normal", bandwidth = ache,x.points=te)$y
+  xc <- scale(x, center=mu, scale=FALSE)
+  tmp.par <- foreach(j=1:Ncand, .combine=rbind, 
+              .inorder=FALSE, .packages='robustbase', 
+              .export=c('coo.fit', 's.scale', 'Rho', 'Rhop')) %dopar% {
+        tmp <- coo.fit(mu=mu, x=x, xc=xc, q=q, seed=seed+17*j, max.it=init.it, tol=tol, 
+                  trace=trace, tuning.rho=tuning.rho, bb=bb)
+        if(!tmp$error.flag) {
+           ( ob <- sum(tmp$sig^2) )
+         } else { NA } 
+  }
+  best.j <- which.min(tmp.par[,1])
+  # if(trace) print(paste('Best: ', best.obj, sep=''))
+  best.tmp <- coo.fit(mu=mu, x=x, xc=xc, q=q, seed=seed+17*best.j, max.it=max.it, tol=tol, 
+                      trace=trace, tuning.rho=tuning.rho, bb=bb)
+  tmp <- c(best.tmp, best.obj=sum(best.tmp$sig^2), list(a.ls=a.ls, b.ls=b.ls, x.ls=x.ls, call=this.call))
+  return(tmp)
+}
+
+
+
 coo.fit <- function(mu, x, xc, q, seed=191, max.it=1000, tol=1e-6, 
                     trace=TRUE, tuning.rho=3, bb=0.24) {
   n <- dim(x)[1]
