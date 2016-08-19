@@ -21,7 +21,7 @@ x <- x[ ,-(1:2)]
 mui <- l1median(X=x, trace=-1) # pcaPP::
 q <- 6
 # number of random starts for the iterative algorithm
-Ncand <- 100
+Ncand <- 1000
 x.s <- sfpca.par(x=x, mu=mui, q=q, Ncand=Ncand, seed=123, init.it=50, max.it=500, 
                  tol=1e-6, trace=FALSE, tuning.rho=3, bb = 0.2426) 
 mu.hat <- x.s$mu
