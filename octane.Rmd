@@ -83,3 +83,22 @@ We now stop our cluster:
 ```{r stopcluster}
 stopCluster(cl)
 ```
+Look at the original data, the robust predictions (in pink) 
+and the detected outliers (in red)
+```{r plotdata, echo=FALSE}
+matplot(t(x), type='l', col='gray', lty=1, lwd=1.5, ylim=c(0, 0.65), 
+        xlab='Frequencies', ylab='Absorbance')
+title(main='Octane data')
+```
+```{r plotpreds, echo=FALSE}
+matplot(t(x.hat.s), type='l', col='hotpink', lty=1, lwd=1.5, ylim=c(0, 0.65), 
+        xlab='Frequencies', ylab='Absorbance') # , add=TRUE)
+title(main='Robust predictions')
+```
+```{r plotouts, echo=FALSE}
+matplot(t(x[ouS,]), type='l', col='gray30', lty=1, lwd=1.5, ylim=c(0, 0.65), 
+        xlab='Frequencies', ylab='Absorbance')
+matplot(t(x.hat.s[ouS,]), type='l', col='red', add=TRUE)
+title(main='Outliers and their robust predictions')
+```
+

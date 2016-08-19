@@ -69,3 +69,5 @@ All known outliers are correctly identified. We now stop our cluster:
 ``` r
 stopCluster(cl)
 ```
+
+Look at the original data, the robust predictions (in pink) and the detected outliers (in red) ![](octane_files/figure-markdown_github/plotdata-1.png) ![](octane_files/figure-markdown_github/plotpreds-1.png) ![](octane_files/figure-markdown_github/plotouts-1.png)
