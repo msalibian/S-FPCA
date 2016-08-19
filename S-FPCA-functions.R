@@ -6,13 +6,13 @@ library(pcaPP)
 library(robustbase)
 
 
-
 # Tukey's Rho function
-Rho <- function(r, tuning.rho=1.54764) tukeyChi(x=r, cc=tuning.rho, deriv=0)
+# Rho <- function(r, tuning.rho=1.54764) tukeyChi(x=r, cc=tuning.rho, deriv=0)
+Rho <- function(r, tuning.rho=1.54764) Mchi(x=r, psi='bisquare', cc=tuning.rho, deriv= 0)
 
 # Tukey's Rho' function
-Rhop <- function(r, tuning.rho=1.54764) tukeyChi(x=r, cc=tuning.rho, deriv=1)
-
+# Rhop <- function(r, tuning.rho=1.54764) tukeyChi(x=r, cc=tuning.rho, deriv=1)
+Rhop <- function(r, tuning.rho=1.54764) Mchi(x=r, psi='bisquare', cc=tuning.rho, deriv= 1)
 
 
 # Given a vector of residuals "r", solve (for "s") the
