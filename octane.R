@@ -19,7 +19,7 @@ x <- read.csv('octane.csv', header=TRUE, dec=',')
 x <- x[ ,-(1:2)]
 
 mui <- l1median(X=x, trace=-1) # pcaPP::
-q <- 3
+q <- 6
 # number of random starts for the iterative algorithm
 Ncand <- 100
 x.s <- sfpca.par(x=x, mu=mui, q=q, Ncand=Ncand, seed=123, init.it=50, max.it=500, 
