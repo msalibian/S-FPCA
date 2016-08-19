@@ -1,14 +1,16 @@
 S-estimators for Functional PCA
 ================
 Matias Salibian
-2016-08-07
+2016-08-18
 
 S-estimators for FPCA
 ---------------------
 
 This repository contains `R` code to compute S-estimators for Functional Principal Components Analysis as proposed in [Boente and Salibian (2015)](http://dx.doi.org/10.1080/01621459.2014.946991).
 
-The following script illustrates this method when applied to the well-known lip movement data. Click [here](http://www.stats.ox.ac.uk/~silverma/fdacasebook/lipemg.html) for more information on these data. Another illustrative example (mortality data example) is in the script `S-FPCA-mortality-example.R`, the data is in `FRA_Death_rates_1x2.txt`
+An example applying this method to the octane data set can be found here. Code to reproduce the analysis of the mortality data can be found in the script `S-FPCA-mortality-example.R`. The data is in `FRA_Death_rates_1x2.txt`
+
+The following script illustrates this method when applied to the well-known lip movement data. Click [here](http://www.stats.ox.ac.uk/~silverma/fdacasebook/lipemg.html) for more information on these data. We first load the necessary functions:
 
 ``` r
 source('S-FPCA-functions.R')
