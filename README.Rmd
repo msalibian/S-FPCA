@@ -17,7 +17,7 @@ compute S-estimators for Functional Principal Components Analysis as proposed in
 [Boente and Salibian (2015)](http://dx.doi.org/10.1080/01621459.2014.946991). 
 
 An example applying this method to the octane data set 
-can be found here. Code to reproduce the
+can be found [here](octane.md). Code to reproduce the
 analysis of the mortality data can be found in
 the script `S-FPCA-mortality-example.R`. 
 The data is in `FRA_Death_rates_1x2.txt`
