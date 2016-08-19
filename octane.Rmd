@@ -17,17 +17,19 @@ Esbensen, Sch\"onkopf, and Midtgaard, 1994,
 Multivariate Analysis in Practice, Trondheim: Camo. 
 It is known that 
 samples 25, 26, and 36:39 contain added alcohol,
-and are thus atypical. 
+and are thus atypical. See
+[Hubert, Rousseeuw and Vanden Branden (2005)](http://dx.doi.org/10.1198/004017004000000563)
+for more details. 
 
-We first load the necessary functions:
+To compute the S-PCA approximations, first load the necessary functions:
 ```{r preliminary, message=FALSE, warning=FALSE}
 source('S-FPCA-functions.R')
 ```
-To utilize multiple cores, we provide the function
+A multi-core version of the code is available via the function
 `sfpca.par` that distributes the
 random starts to different cores, if they are
 present. In this example we assume that 
-there are 4 cores available. 
+we have 4 cores available. 
 ```{r prel.par, message=FALSE, warning=FALSE}
 library(doParallel)
 cl <- makeCluster(4)
@@ -38,28 +40,46 @@ Now read the data:
 x <- read.csv('octane.csv', header=TRUE, dec=',')
 x <- x[ ,-(1:2)]
 ```
-Compute an initial centre using the L1 estimator
+Compute an initial location estimate using the L1 estimator, 
+implemented in the `pcaPP` package:
 ```{r initial.centre}
-mui <- l1median(X=x, trace=-1) # pcaPP::
+mui <- l1median(X=x, trace=-1)
 ```
-We now compute the projections on the 
-robustly estimated 6-dimensional
-principal subspace:
+We now compute the 
+robustly estimated 2-dimensional
+principal subspace, using `Ncand = 1000` random
+starts. This takes a long time to compute (about 1hr 
+in my computer):
 ```{r sfpca, cache=TRUE}
 q <- 2
 Ncand <- 1000
 x.s <- sfpca.par(x=x, mu=mui, q=q, Ncand=Ncand, seed=123, init.it=50, max.it=500, 
-                 tol=1e-6, trace=FALSE, tuning.rho=3, bb = 0.2426) 
+                 tol=1e-6, trace=FALSE, tuning.rho=3, bb = 0.2426)
+```
+We now compute the residuals between the
+observations and their robust 2-dimensional approximations:
+```{r rob.fits}
 mu.hat <- x.s$mu
 xc <- scale(x, center=x.s$mu, scale=FALSE)
 bon <- qr.Q(qr(x.s$b))
 x.hat.s <- scale( (xc %*% bon) %*% t( bon ), center=-x.s$mu, scale=FALSE)
 re.s <- rowMeans((x-x.hat.s)^2)
-#known outliers
-outs.true <- c(25, 26, 36:39)
+```
+To determine whether any of these residuals is atypical, 
+and considering the natural skewness of squared distances,
+we use the adjusted boxplot of 
+[Hubert and Vandervieren (2008)](http://dx.doi.org/10.1016/j.csda.2007.11.008)
+as implemented in the `robustbase` package:
+```{r outliers}
 names(re.s) <- 1:nrow(x)
-ouS <- as.numeric(names(adjbox(re.s)$out))
+ouS <- as.numeric(names(adjbox(re.s, plot=FALSE)$out))
 inliers <- re.s[ouS] < median(re.s)
 outs.s <- ouS[!inliers]
+outs.true <- c(25, 26, 36:39)
 all.equal(outs.s, outs.true)
+```
+All known outliers are correctly identified. 
+We now stop our cluster:
+```{r stopcluster}
+stopCluster(cl)
 ```
