@@ -96,9 +96,9 @@ matplot(t(x.hat.s), type='l', col='hotpink', lty=1, lwd=1.5, ylim=c(0, 0.65),
 title(main='Robust predictions')
 ```
 ```{r plotouts, echo=FALSE}
-matplot(t(x[ouS,]), type='l', col='gray30', lty=1, lwd=1.5, ylim=c(0, 0.65), 
+matplot(t(x[ouS,]), type='l', col='red', lty=1, lwd=1.5, ylim=c(0, 0.65), 
         xlab='Frequencies', ylab='Absorbance')
-matplot(t(x.hat.s[ouS,]), type='l', col='red', add=TRUE)
+matplot(t(x.hat.s[ouS,]), type='l', col='hotpink', add=TRUE)
 title(main='Outliers and their robust predictions')
 ```
 

@@ -1,7 +1,7 @@
 S-PCA
 ================
 Matias Salibian
-2016-08-19
+2016-12-30
 
 The octane dataset contains 39 (n) near-infrared (NIR) absorbance spectra over 226 (p) different wavelengths. It was first discussed in Esbensen, Sch"onkopf, and Midtgaard, 1994, Multivariate Analysis in Practice, Trondheim: Camo. It is known that samples 25, 26, and 36:39 contain added alcohol, and are thus atypical. See [Hubert, Rousseeuw and Vanden Branden (2005)](http://dx.doi.org/10.1198/004017004000000563) for more details.
 
