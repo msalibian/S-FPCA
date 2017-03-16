@@ -62,6 +62,8 @@ s.scale <- function(r, tuning.rho=1.54764, b=.5, max.it=1000, ep=1e-4)
 
 sfpca <- function(x, mu, q, Ncand=50, seed=191, init.it=20, max.it=500, tol=1e-6, 
                   trace=TRUE, tuning.rho=3, bb=0.24) {
+  oldSeed <- get(".Random.seed", mode="numeric", envir=globalenv())
+  on.exit(assign(".Random.seed", oldSeed, envir=globalenv()))
   this.call <- match.call()
   # LS solution
   sih <- var(x)
@@ -98,6 +100,8 @@ sfpca <- function(x, mu, q, Ncand=50, seed=191, init.it=20, max.it=500, tol=1e-6
 sfpca.par <- function(x, mu, q, Ncand=50, seed=191, init.it=20, max.it=500, tol=1e-6, 
                       trace=TRUE, tuning.rho=3, bb=0.24) {
   # doParallel version of sfpca()
+  oldSeed <- get(".Random.seed", mode="numeric", envir=globalenv())
+  on.exit(assign(".Random.seed", oldSeed, envir=globalenv()))
   this.call <- match.call()
   # LS solution
   sih <- var(x)
